@@ -7,7 +7,7 @@ import cors from "cors";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
 
-dotenv.config();
+dotenv.config({ quiet: true });
 
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
