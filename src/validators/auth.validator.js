@@ -7,7 +7,7 @@ export const registerSchema = z.object({
     .max(10),
 
   email: z
-    .string({ required_error })
+    .string({ required_error: "El email es requerido" })
     .email({ message: "Email Invalido" })
     .regex(
       /^(?!\.)(?!.*\.\.)([a-z0-9_'+\-\.]*)[a-z0-9_+-]@([a-z0-9][a-z0-9\-]*\.)+[a-z]{2,}$/i,
