@@ -15,6 +15,8 @@ export const register = async (req, res) => {
 
     const passwordHash = await bcrypt.hash(password, 12);
 
+    const role = email === "seaviewresort.noreply@gmail.com" ? "admin" : "user";
+
     const verificationToken = crypto.randomBytes(20).toString("hex");
 
     const newUser = new User({
@@ -22,6 +24,7 @@ export const register = async (req, res) => {
       email,
       password: passwordHash,
       verificationToken,
+      role,
     });
 
     const savedUser = await newUser.save();
@@ -43,6 +46,7 @@ export const register = async (req, res) => {
       id: savedUser._id,
       username: savedUser.username,
       email: savedUser.email,
+      role: savedUser.role,
     });
 
     res.cookie("token", token, {
@@ -56,6 +60,7 @@ export const register = async (req, res) => {
       username: savedUser.username,
       email: savedUser.email,
       isVerified: savedUser.isVerified,
+      role: savedUser.role,
       token,
     });
   } catch (error) {
@@ -77,10 +82,19 @@ export const login = async (req, res) => {
     if (!passwordMatch)
       return res.status(400).json({ message: "Credenciales invalidas" });
 
+    if (
+      userMatch.email === "seaviewresort.noreply@gmail.com" &&
+      userMatch.role !== "admin"
+    ) {
+      userMatch.role = "admin";
+      await userMatch.save();
+    }
+
     const token = await createToken({
       id: userMatch._id,
       username: userMatch.username,
       email: userMatch.email,
+      role: userMatch.role,
     });
 
     res.cookie("token", token, {
@@ -94,6 +108,7 @@ export const login = async (req, res) => {
       username: userMatch.username,
       email: userMatch.email,
       isVerified: userMatch.isVerified,
+      role: userMatch.role,
       token,
     });
   } catch (error) {
