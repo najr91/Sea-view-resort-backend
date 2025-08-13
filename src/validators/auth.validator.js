@@ -26,8 +26,5 @@ export const loginSchema = z.object({
     .string({ required_error: "El email es requerido" })
     .email({ message: "Email invalido" }),
 
-  password: z
-    .string({ required_error: "La contraseña es requerida" })
-    .min(6, { message: "La contraseña debe contener al menos 6 caracteres" })
-    .max(17, { message: "La contraseña debe contener menos de 18 caracteres" }),
+  password: z.string({ required_error: "La contraseña es requerida" }),
 });
