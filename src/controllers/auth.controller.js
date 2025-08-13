@@ -30,6 +30,20 @@ export const register = async (req, res) => {
       username: savedUser.username,
       email: savedUser.email,
     });
+
+    res.cookie("token", token, {
+      httpOnly: process.env.NODE_ENV !== "developmen",
+      secure: true,
+      sameSite: "none",
+    });
+
+    res.status(201).json({
+      id: savedUser._id,
+      username: savedUser.username,
+      email: savedUser.email,
+      isVerified: savedUser.isVerified,
+      token,
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: error.message });
