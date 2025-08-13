@@ -18,6 +18,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       require: true,
     },
+
     profileImage: {
       type: String,
       default:
@@ -38,6 +39,11 @@ const userSchema = new mongoose.Schema(
     passwordResetExpires: {
       type: Date,
       default: null,
+    },
+    role: {
+      type: String,
+      enum: ["admin", "user"],
+      default: "user",
     },
   },
   {
