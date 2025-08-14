@@ -11,7 +11,7 @@ dotenv.config({ quiet: true });
 
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
-const _dirname = path.dirname(__filename);
+const __dirname = path.dirname(__filename);
 
 const corsOptions = {
   origin: process.env.FRONTEND_URL || "http://localhost:5173",
@@ -34,7 +34,7 @@ app.use(morgan("dev"));
 
 app.use(cookieParser());
 
-app.use(express.static(path.join(_dirname, "public")));
+app.use(express.static(path.join(__dirname, "public")));
 
 const routeFiles = fs.readdirSync("./src/routes");
 
