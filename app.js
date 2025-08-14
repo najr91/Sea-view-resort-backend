@@ -33,7 +33,6 @@ app.use(urlencoded({ extended: true }));
 app.use(morgan("dev"));
 
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, "public")));
 
 // --- Rutas ---
 app.use("/api/rooms", roomsRouter);
