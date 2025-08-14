@@ -23,7 +23,7 @@ export const protect = (req, res, next) => {
 };
 
 // Middleware para permitir solo administradores
-export const adminOnly = (req, res, next) => {
+export const isAdmin = (req, res, next) => {
   // verifico que el usuario esté autenticado y tenga rol de admin
   if (req.user && req.user.role === "admin") {
     return next();
