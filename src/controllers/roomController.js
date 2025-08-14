@@ -25,3 +25,38 @@ export const createRoom = async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 };
+
+// PUT 
+export const updateRoom = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updatedRoom = await Room.findByIdAndUpdate(id, req.body, {
+      new: true, // Devuelve el documento actualizado
+      runValidators: true // Valida el esquema
+    });
+
+    if (!updatedRoom) {
+      return res.status(404).json({ message: "Habitación no encontrada" });
+    }
+
+    res.json(updatedRoom);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
+
+// DELETE 
+export const deleteRoom = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deletedRoom = await Room.findByIdAndDelete(id);
+
+    if (!deletedRoom) {
+      return res.status(404).json({ message: "Habitación no encontrada" });
+    }
+
+    res.json({ message: "Habitación eliminada correctamente" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
