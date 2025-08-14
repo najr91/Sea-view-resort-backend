@@ -3,6 +3,8 @@ import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import { createToken } from "../helpers/jwt.js";
 import transport from "../helpers/mailer.js";
+import jwt from "jsonwebtoken";
+import { email, success } from "zod";
 
 export const register = async (req, res) => {
   try {
@@ -122,6 +124,84 @@ export const logout = async (req, res) => {
     res.cookie("token", "", { expires: new Date(0) });
 
     res.status(200).json({ message: "Sesión cerrada" });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+export const profile = async (req, res) => {
+  try {
+    const userMatch = await User.findById(req.user.id);
+
+    if (!userMatch)
+      return res.status(404).json({ message: "Usuario no encontrado" });
+
+    return res.status(200).json({
+      id: userMatch.id,
+      username: userMatch.username,
+      email: userMatch.email,
+      profileImage: userMatch.profileImage,
+      createdAt: userMatch.createdAt,
+      updatedAt: userMatch.updatedAt,
+      role: userMatch.role,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+export const verifyToken = async (req, res) => {
+  try {
+    let token;
+
+    if (!token && req.cookies?.token) {
+      token = req.cookies.token;
+    } else {
+      return res.status(401).json({ message: "Token no recibido" });
+    }
+
+    const decoded = jwt.verify(token, process.env.SECRET_KEY_TOKEN);
+    const userMatch = await User.findById(decoded.id);
+
+    if (!userMatch) return res.status(401);
+
+    return res.json({
+      id: userMatch._id,
+      username: userMatch.username,
+      email: userMatch.email,
+      isVerified: userMatch.isVerified,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+export const verifyEmail = async (req, res) => {
+  try {
+    const { token } = req.query;
+
+    const user = await User.findOne({ verificationToken: token });
+
+    if (!user) {
+      return res.status(400).json({ message: "Token invalido o expirado" });
+    }
+
+    user.isVerified = true;
+    user.verificationToken = undefined;
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Email verificado!",
+      user: {
+        id: user.username,
+        email: user.email,
+        isVerified: user.isVerified,
+      },
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: error.message });
