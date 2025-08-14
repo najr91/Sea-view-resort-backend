@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 import cors from "cors";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
+import roomsRouter from "./src/routes/rooms.js";
 
 dotenv.config({ quiet: true });
 
