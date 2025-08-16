@@ -5,8 +5,6 @@ import { fileURLToPath } from "node:url";
 import cors from "cors";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
-
-// Importar rutas
 import roomsRouter from "./src/routes/rooms.js";
 
 dotenv.config();
@@ -29,11 +27,13 @@ app.use(urlencoded({ extended: true }));
 app.use(morgan("dev"));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// --- Rutas ---
+
+
 app.use("/api/rooms", roomsRouter);
 
-// Ruta de prueba
+
 app.get("/", (req, res) => {
   res.send("API funcionando 🚀");
 });

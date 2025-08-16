@@ -59,16 +59,21 @@ export const addPhotos = async (req, res) => {
       return res.status(404).json({ message: "Habitación no encontrada" });
     }
 
-   
-    const photoPaths = req.files.map(file => `/uploads/rooms/${file.filename}`);
-    room.photos.push(...photoPaths);
+    
+    const photoUrls = req.files.map(file => {
+      return `${req.protocol}://${req.get("host")}/uploads/rooms/${file.filename}`;
+    });
+
+    room.photos.push(...photoUrls);
 
     await room.save();
     res.json(room);
   } catch (error) {
-    res.status(500).json({ message: "Error al subir fotos" });
+    res.status(500).json({ message: "Error al subir fotos", error: error.message });
   }
 };
+
+
 
 
 export const deletePhoto = async (req, res) => {
