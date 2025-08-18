@@ -1,62 +1,94 @@
 import Room from "../models/Room.js";
 
-// GET /rooms
+
 export const getRooms = async (req, res) => {
   try {
     const rooms = await Room.find();
     res.json(rooms);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+  } catch (error) {
+    res.status(500).json({ message: "Error al obtener habitaciones" });
   }
 };
 
-// POST /rooms
+
 export const createRoom = async (req, res) => {
   try {
-    const room = new Room({
+    const newRoom = new Room({
       type: req.body.type,
       price: req.body.price,
-      available: req.body.available ?? true,
-      photos: [] // lo dejamos vacío por ahora
+      available: req.body.available,
+      photos: [] // inicia sin fotos
     });
-    await room.save();
-    res.status(201).json(room);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
+
+    const savedRoom = await newRoom.save();
+    res.status(201).json(savedRoom);
+  } catch (error) {
+    res.status(500).json({ message: "Error al crear habitación" });
   }
 };
 
-// PUT 
+
 export const updateRoom = async (req, res) => {
   try {
-    const { id } = req.params;
-    const updatedRoom = await Room.findByIdAndUpdate(id, req.body, {
-      new: true, // Devuelve el documento actualizado
-      runValidators: true // Valida el esquema
-    });
-
-    if (!updatedRoom) {
-      return res.status(404).json({ message: "Habitación no encontrada" });
-    }
-
+    const updatedRoom = await Room.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
     res.json(updatedRoom);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
+  } catch (error) {
+    res.status(500).json({ message: "Error al actualizar habitación" });
   }
 };
 
-// DELETE 
+
 export const deleteRoom = async (req, res) => {
   try {
-    const { id } = req.params;
-    const deletedRoom = await Room.findByIdAndDelete(id);
+    await Room.findByIdAndDelete(req.params.id);
+    res.json({ message: "Habitación eliminada" });
+  } catch (error) {
+    res.status(500).json({ message: "Error al eliminar habitación" });
+  }
+};
 
-    if (!deletedRoom) {
+
+export const addPhotos = async (req, res) => {
+  try {
+    const room = await Room.findById(req.params.id);
+    if (!room) {
       return res.status(404).json({ message: "Habitación no encontrada" });
     }
 
-    res.json({ message: "Habitación eliminada correctamente" });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+    
+    const photoUrls = req.files.map(file => {
+      return `${req.protocol}://${req.get("host")}/uploads/rooms/${file.filename}`;
+    });
+
+    room.photos.push(...photoUrls);
+
+    await room.save();
+    res.json(room);
+  } catch (error) {
+    res.status(500).json({ message: "Error al subir fotos", error: error.message });
+  }
+};
+
+
+
+
+export const deletePhoto = async (req, res) => {
+  try {
+    const room = await Room.findById(req.params.id);
+    if (!room) {
+      return res.status(404).json({ message: "Habitación no encontrada" });
+    }
+
+    const { photoUrl } = req.body;
+    room.photos = room.photos.filter(p => p !== photoUrl);
+
+    await room.save();
+    res.json(room);
+  } catch (error) {
+    res.status(500).json({ message: "Error al eliminar foto" });
   }
 };
