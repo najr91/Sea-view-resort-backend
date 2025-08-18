@@ -1,14 +1,8 @@
-import mongoose from "mongoose";
 import dayjs from "dayjs";
-import Room from "../models/Room.js";
+import Reserva from "../models/Reserva.js";
+import FormModel from "../models/Form-model.js";
 
-// Modelo de Reserva adaptado a Room
-const reservaSchema = new mongoose.Schema({
-  roomId: { type: mongoose.Schema.Types.ObjectId, ref: "Room" },
-  checkIn: Date,
-  checkOut: Date
-});
-const Reserva = mongoose.models.Reserva || mongoose.model("Reserva", reservaSchema);
+
 
 // Obtener disponibilidad de una habitación
 export const getRoomDisponibilidad = async (req, res) => {
