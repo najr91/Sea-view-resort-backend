@@ -3,53 +3,48 @@ import cors from "cors";
 import dayjs from "dayjs";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import Room from "../models/Room.js";
 
 dotenv.config();
 
-const server = express(); 
+const server = express();
 server.use(cors());
 server.use(express.json());
 
-//  Modelos 
-const habitacionSchema = new mongoose.Schema({
-  nombre: String,
-  precio: Number
-});
-const Habitacion = mongoose.model("Habitacion", habitacionSchema);
-
+// Modelo de Reserva adaptado a Room
 const reservaSchema = new mongoose.Schema({
-  habitacionId: { type: mongoose.Schema.Types.ObjectId, ref: "Habitacion" },
+  roomId: { type: mongoose.Schema.Types.ObjectId, ref: "Room" },
   checkIn: Date,
   checkOut: Date
 });
 const Reserva = mongoose.model("Reserva", reservaSchema);
 
-// Endpoints Habitaciones
-server.get("/habitaciones", async (req, res) => {
+// Endpoints Rooms
+server.get("/rooms", async (req, res) => {
   try {
-    const habitaciones = await Habitacion.find();
-    res.json(habitaciones);
+    const rooms = await Room.find();
+    res.json(rooms);
   } catch (err) {
     res.status(500).json({ error: "Error al obtener habitaciones" });
   }
 });
 
-server.post("/habitaciones", async (req, res) => {
+server.post("/rooms", async (req, res) => {
   try {
-    const habitacion = new Habitacion(req.body);
-    await habitacion.save();
-    res.status(201).json(habitacion);
+    const room = new Room(req.body);
+    await room.save();
+    res.status(201).json(room);
   } catch (err) {
     res.status(500).json({ error: "Error al crear habitación" });
   }
 });
 
-// Ver disponibilidad
-server.get("/habitaciones/:id/disponibilidad", async (req, res) => {
+// Ver disponibilidad de una habitación
+server.get("/rooms/:id/disponibilidad", async (req, res) => {
   try {
     const { checkIn, checkOut } = req.query;
     const reservas = await Reserva.find({
-      habitacionId: req.params.id,
+      roomId: req.params.id,
       checkIn: { $lt: checkOut },
       checkOut: { $gt: checkIn }
     });
@@ -62,14 +57,14 @@ server.get("/habitaciones/:id/disponibilidad", async (req, res) => {
 // Crear reserva
 server.post("/reservas", async (req, res) => {
   try {
-    const { habitacionId, checkIn, checkOut } = req.body;
+    const { roomId, checkIn, checkOut } = req.body;
 
     if (dayjs(checkOut).isSameOrBefore(checkIn)) {
       return res.status(400).json({ error: "Fechas inválidas" });
     }
 
     const conflicto = await Reserva.findOne({
-      habitacionId,
+      roomId,
       checkIn: { $lt: checkOut },
       checkOut: { $gt: checkIn }
     });
@@ -78,7 +73,7 @@ server.post("/reservas", async (req, res) => {
       return res.status(400).json({ error: "La habitación no está disponible en esas fechas" });
     }
 
-    const reserva = new Reserva({ habitacionId, checkIn, checkOut });
+    const reserva = new Reserva({ roomId, checkIn, checkOut });
     await reserva.save();
     res.status(201).json(reserva);
   } catch (err) {
@@ -89,14 +84,14 @@ server.post("/reservas", async (req, res) => {
 // Listar reservas
 server.get("/reservas", async (req, res) => {
   try {
-    const reservas = await Reserva.find().populate("habitacionId");
+    const reservas = await Reserva.find().populate("roomId");
     res.json(reservas);
   } catch (err) {
     res.status(500).json({ error: "Error al obtener reservas" });
   }
 });
 
-//  Actualizar reserva
+// Actualizar reserva
 server.put("/reservas/:id", async (req, res) => {
   try {
     const reserva = await Reserva.findByIdAndUpdate(req.params.id, req.body, { new: true });
@@ -116,3 +111,5 @@ server.delete("/reservas/:id", async (req, res) => {
     res.status(500).json({ error: "Error al eliminar reserva" });
   }
 });
+
+export default server;
