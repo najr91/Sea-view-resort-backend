@@ -1,8 +1,5 @@
 import dayjs from "dayjs";
 import Reserva from "../models/Reserva.js";
-import FormModel from "../models/Form-model.js";
-
-
 
 // Obtener disponibilidad de una habitación
 export const getRoomDisponibilidad = async (req, res) => {
@@ -22,23 +19,25 @@ export const getRoomDisponibilidad = async (req, res) => {
 // Crear una reserva
 export const createReserva = async (req, res) => {
   try {
-    const { roomId, checkIn, checkOut } = req.body;
+    const { roomId, checkIn, checkOut, destino } = req.body;
 
     if (dayjs(checkOut).isSameOrBefore(checkIn)) {
       return res.status(400).json({ error: "Fechas inválidas" });
     }
 
+    // Buscar conflicto por roomId, destino y fechas solapadas
     const conflicto = await Reserva.findOne({
       roomId,
+      destino,
       checkIn: { $lt: checkOut },
       checkOut: { $gt: checkIn }
     });
 
     if (conflicto) {
-      return res.status(400).json({ error: "La habitación no está disponible en esas fechas" });
+      return res.status(400).json({ error: "La habitación no está disponible en ese destino y fechas" });
     }
 
-    const reserva = new Reserva({ roomId, checkIn, checkOut });
+    const reserva = new Reserva({ roomId, checkIn, checkOut, destino });
     await reserva.save();
     res.status(201).json(reserva);
   } catch (err) {
