@@ -1,15 +1,6 @@
-import express from "express";
-import cors from "cors";
-import dayjs from "dayjs";
 import mongoose from "mongoose";
-import dotenv from "dotenv";
+import dayjs from "dayjs";
 import Room from "../models/Room.js";
-
-dotenv.config();
-
-const server = express();
-server.use(cors());
-server.use(express.json());
 
 // Modelo de Reserva adaptado a Room
 const reservaSchema = new mongoose.Schema({
@@ -17,30 +8,10 @@ const reservaSchema = new mongoose.Schema({
   checkIn: Date,
   checkOut: Date
 });
-const Reserva = mongoose.model("Reserva", reservaSchema);
+const Reserva = mongoose.models.Reserva || mongoose.model("Reserva", reservaSchema);
 
-// Endpoints Rooms
-server.get("/rooms", async (req, res) => {
-  try {
-    const rooms = await Room.find();
-    res.json(rooms);
-  } catch (err) {
-    res.status(500).json({ error: "Error al obtener habitaciones" });
-  }
-});
-
-server.post("/rooms", async (req, res) => {
-  try {
-    const room = new Room(req.body);
-    await room.save();
-    res.status(201).json(room);
-  } catch (err) {
-    res.status(500).json({ error: "Error al crear habitación" });
-  }
-});
-
-// Ver disponibilidad de una habitación
-server.get("/rooms/:id/disponibilidad", async (req, res) => {
+// Obtener disponibilidad de una habitación
+export const getRoomDisponibilidad = async (req, res) => {
   try {
     const { checkIn, checkOut } = req.query;
     const reservas = await Reserva.find({
@@ -52,10 +23,10 @@ server.get("/rooms/:id/disponibilidad", async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: "Error al verificar disponibilidad" });
   }
-});
+};
 
-// Crear reserva
-server.post("/reservas", async (req, res) => {
+// Crear una reserva
+export const createReserva = async (req, res) => {
   try {
     const { roomId, checkIn, checkOut } = req.body;
 
@@ -79,20 +50,20 @@ server.post("/reservas", async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: "Error al crear reserva" });
   }
-});
+};
 
 // Listar reservas
-server.get("/reservas", async (req, res) => {
+export const getReservas = async (req, res) => {
   try {
     const reservas = await Reserva.find().populate("roomId");
     res.json(reservas);
   } catch (err) {
     res.status(500).json({ error: "Error al obtener reservas" });
   }
-});
+};
 
 // Actualizar reserva
-server.put("/reservas/:id", async (req, res) => {
+export const updateReserva = async (req, res) => {
   try {
     const reserva = await Reserva.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!reserva) return res.status(404).json({ error: "No encontrada" });
@@ -100,16 +71,14 @@ server.put("/reservas/:id", async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: "Error al actualizar reserva" });
   }
-});
+};
 
 // Eliminar reserva
-server.delete("/reservas/:id", async (req, res) => {
+export const deleteReserva = async (req, res) => {
   try {
     await Reserva.findByIdAndDelete(req.params.id);
     res.json({ message: "Reserva eliminada" });
   } catch (err) {
     res.status(500).json({ error: "Error al eliminar reserva" });
   }
-});
-
-export default server;
+};
