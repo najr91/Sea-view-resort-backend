@@ -7,6 +7,7 @@ import cors from "cors";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import roomsRouter from "./src/routes/rooms.js";
+import reservasRouter from "./src/routes/reservas.js";
 
 dotenv.config({ quiet: true });
 
@@ -28,6 +29,9 @@ app.use(urlencoded({ extended: true }));
 app.use(morgan("dev"));
 app.use(cookieParser());
 
+// --- Rutas ---
+app.use("/api/rooms", roomsRouter);
+app.use("/api", reservasRouter);
 
 app.use(express.static(path.join(__dirname, "public")));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
