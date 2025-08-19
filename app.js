@@ -9,6 +9,8 @@ import cookieParser from "cookie-parser";
 import roomsRouter from "./src/routes/rooms.js";
 import reservasRouter from "./src/routes/reservas.js";
 import adminUserRoutes from "./src/routes/adminUser.routes.js";
+import authRoutes from "./src/routes/auth.routes.js";
+
 
 
 
@@ -42,6 +44,8 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.use("/api/rooms", roomsRouter);
 app.use("/api/admin/users", adminUserRoutes);
+app.use("/api/auth", authRoutes);
+
 
 
 app.get("/", (req, res) => {
