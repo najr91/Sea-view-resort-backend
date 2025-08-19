@@ -5,8 +5,8 @@ import {
   createRoom,
   updateRoom,
   deleteRoom,
-  addPhotos,
-  deletePhoto,
+  addImages,     // <- cambiado
+  deleteImage,   // <- cambiado
 } from "../controllers/roomController.js";
 import { protect, isAdmin } from "../middlewares/authMiddleware.js";
 
@@ -20,7 +20,6 @@ const storage = multer.diskStorage({
     cb(null, Date.now() + "-" + file.originalname);
   },
 });
-
 
 const fileFilter = (req, file, cb) => {
   const allowedExtensions = /jpeg|jpg|png|webp/;
@@ -39,7 +38,6 @@ const upload = multer({
 });
 
 router.get("/", getRooms);
-
 router.post("/", protect, isAdmin, createRoom);
 router.put("/:id", protect, isAdmin, updateRoom);
 router.delete("/:id", protect, isAdmin, deleteRoom);
@@ -49,9 +47,9 @@ router.post(
   protect,
   isAdmin,
   upload.array("photos", 5), // máximo 5 imágenes por solicitud
-  addPhotos
+  addImages
 );
 
-router.delete("/:id/photos", protect, isAdmin, deletePhoto);
+router.delete("/:id/photos", protect, isAdmin, deleteImage);
 
 export default router;
