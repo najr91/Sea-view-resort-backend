@@ -8,7 +8,9 @@ import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import roomsRouter from "./src/routes/rooms.js";
 import reservasRouter from "./src/routes/reservas.js";
-import adminUserRoutes from "./routes/adminUser.routes.js";
+import adminUserRoutes from "./src/routes/adminUser.routes.js";
+
+
 
 dotenv.config({ quiet: true });
 
