@@ -20,10 +20,14 @@ export const getRoomDisponibilidad = async (req, res) => {
 // Crear una reserva
 export const createReserva = async (req, res) => {
   try {
-    const { roomId, checkIn, checkOut, destino } = req.body;
+    const { roomId, checkIn, checkOut, destino, huespedes } = req.body;
 
     if (dayjs(checkOut).isSameOrBefore(checkIn)) {
       return res.status(400).json({ error: "Fechas inválidas" });
+    }
+
+    if (!Number.isInteger(huespedes) || huespedes < 1) {
+      return res.status(400).json({ error: "Cantidad de huéspedes inválida" });
     }
 
     // Validar disponibilidad global por tipo y destino
@@ -45,7 +49,7 @@ export const createReserva = async (req, res) => {
       return res.status(400).json({ error: "La habitación no está disponible en ese destino y fechas" });
     }
 
-    const reserva = new Reserva({ roomId, checkIn, checkOut, destino });
+    const reserva = new Reserva({ roomId, checkIn, checkOut, destino, huespedes });
     await reserva.save();
     res.status(201).json(reserva);
   } catch (err) {

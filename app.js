@@ -31,7 +31,7 @@ app.use(cookieParser());
 
 // --- Rutas ---
 app.use("/api/rooms", roomsRouter);
-app.use("/api/reservas", reservasRouter);
+app.use("/api", reservasRouter);
 
 app.use(express.static(path.join(__dirname, "public")));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
