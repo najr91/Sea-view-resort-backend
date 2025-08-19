@@ -58,7 +58,13 @@ export const addImages = async (req, res) => {
       return `${req.protocol}://${req.get("host")}/uploads/rooms/${file.filename}`;
     });
 
+   
     room.images.push(...imageUrls);
+
+   
+    if (room.images.length > 10) {
+      room.images = room.images.slice(room.images.length - 10); // se quedan las 10 más recientes
+    }
 
     await room.save();
     res.json(room);
