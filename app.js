@@ -8,6 +8,7 @@ import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import roomsRouter from "./src/routes/rooms.js";
 import reservasRouter from "./src/routes/reservas.js";
+import adminUserRoutes from "./routes/adminUser.routes.js";
 
 dotenv.config({ quiet: true });
 
@@ -38,6 +39,7 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 
 app.use("/api/rooms", roomsRouter);
+app.use("/api/admin/users", adminUserRoutes);
 
 
 app.get("/", (req, res) => {
