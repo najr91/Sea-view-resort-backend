@@ -54,20 +54,24 @@ export const addImages = async (req, res) => {
       return res.status(404).json({ message: "Habitación no encontrada" });
     }
 
+    
+    if (room.images.length + req.files.length > 10) {
+      return res.status(400).json({
+        message: `No se pueden subir ${req.files.length} imagen(es). El máximo permitido por habitación es 10. Por favor borre una imagen para continuar agregando.`
+      });
+    }
+
     const imageUrls = req.files.map(file => {
       return `${req.protocol}://${req.get("host")}/uploads/rooms/${file.filename}`;
     });
 
-   
     room.images.push(...imageUrls);
-
-   
-    if (room.images.length > 10) {
-      room.images = room.images.slice(room.images.length - 10); // se quedan las 10 más recientes
-    }
-
     await room.save();
-    res.json(room);
+
+    res.json({
+      room,
+      message: "Imágenes agregadas correctamente"
+    });
   } catch (error) {
     res.status(500).json({ message: "Error al subir imágenes", error: error.message });
   }
