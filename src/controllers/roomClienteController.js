@@ -1,5 +1,6 @@
 import dayjs from "dayjs";
 import Reserva from "../models/Reserva.js";
+import { validarDisponibilidad } from "../validators/reserva.validator.js";
 
 // Obtener disponibilidad de una habitación
 export const getRoomDisponibilidad = async (req, res) => {
@@ -23,6 +24,13 @@ export const createReserva = async (req, res) => {
 
     if (dayjs(checkOut).isSameOrBefore(checkIn)) {
       return res.status(400).json({ error: "Fechas inválidas" });
+    }
+
+    // Validar disponibilidad global por tipo y destino
+    try {
+      await validarDisponibilidad({ roomId, destino, checkIn, checkOut });
+    } catch (err) {
+      return res.status(400).json({ error: err.message });
     }
 
     // Buscar conflicto por roomId, destino y fechas solapadas
