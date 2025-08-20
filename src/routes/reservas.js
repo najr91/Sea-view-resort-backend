@@ -13,7 +13,7 @@ const router = express.Router();
 router.get("/rooms/:id/disponibilidad", getRoomDisponibilidad);
 
 // CRUD reservas
-router.post("/reservas", createReserva);
+router.post("/reserva", createReserva);
 router.get("/reservas", getReservas);
 router.put("/reservas/:id", updateReserva);
 router.delete("/reservas/:id", deleteReserva);
