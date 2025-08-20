@@ -1,6 +1,5 @@
 import Room from "../models/Room.js";
 
-
 export const getRooms = async (req, res) => {
   try {
     const rooms = await Room.find();
@@ -10,14 +9,13 @@ export const getRooms = async (req, res) => {
   }
 };
 
-
 export const createRoom = async (req, res) => {
   try {
     const newRoom = new Room({
-      type: req.body.type,
+      name: req.body.name,
       price: req.body.price,
-      available: req.body.available,
-      photos: [] // inicia sin fotos
+      description: req.body.description,
+      images: [] 
     });
 
     const savedRoom = await newRoom.save();
@@ -26,7 +24,6 @@ export const createRoom = async (req, res) => {
     res.status(500).json({ message: "Error al crear habitación" });
   }
 };
-
 
 export const updateRoom = async (req, res) => {
   try {
@@ -41,7 +38,6 @@ export const updateRoom = async (req, res) => {
   }
 };
 
-
 export const deleteRoom = async (req, res) => {
   try {
     await Room.findByIdAndDelete(req.params.id);
@@ -51,8 +47,7 @@ export const deleteRoom = async (req, res) => {
   }
 };
 
-
-export const addPhotos = async (req, res) => {
+export const addImages = async (req, res) => {
   try {
     const room = await Room.findById(req.params.id);
     if (!room) {
@@ -60,35 +55,41 @@ export const addPhotos = async (req, res) => {
     }
 
     
-    const photoUrls = req.files.map(file => {
+    if (room.images.length + req.files.length > 10) {
+      return res.status(400).json({
+        message: `No se pueden subir ${req.files.length} imagen(es). El máximo permitido por habitación es 10. Por favor borre una imagen para continuar agregando.`
+      });
+    }
+
+    const imageUrls = req.files.map(file => {
       return `${req.protocol}://${req.get("host")}/uploads/rooms/${file.filename}`;
     });
 
-    room.photos.push(...photoUrls);
-
+    room.images.push(...imageUrls);
     await room.save();
-    res.json(room);
+
+    res.json({
+      room,
+      message: "Imágenes agregadas correctamente"
+    });
   } catch (error) {
-    res.status(500).json({ message: "Error al subir fotos", error: error.message });
+    res.status(500).json({ message: "Error al subir imágenes", error: error.message });
   }
 };
 
-
-
-
-export const deletePhoto = async (req, res) => {
+export const deleteImage = async (req, res) => {
   try {
     const room = await Room.findById(req.params.id);
     if (!room) {
       return res.status(404).json({ message: "Habitación no encontrada" });
     }
 
-    const { photoUrl } = req.body;
-    room.photos = room.photos.filter(p => p !== photoUrl);
+    const { imageUrl } = req.body;
+    room.images = room.images.filter(img => img !== imageUrl);
 
     await room.save();
     res.json(room);
   } catch (error) {
-    res.status(500).json({ message: "Error al eliminar foto" });
+    res.status(500).json({ message: "Error al eliminar imagen" });
   }
 };
