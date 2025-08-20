@@ -95,6 +95,28 @@ Ejecuta el servidor en modo producción.
 ├── .gitignore        # Archivos ignorados por Git
 └── routes/           # Definición de rutas principales (auth, rooms, reservations)
 
+📑 Documentación de la API
+| Recurso          | Método | Ruta                    | Descripción                                 | Autenticación |
+| ---------------- | ------ | ----------------------- | ------------------------------------------- | ------------- |
+| **Auth**         | POST   | `/api/auth/register`    | Registrar un nuevo usuario                  | ❌             |
+|                  | POST   | `/api/auth/login`       | Iniciar sesión y obtener token JWT          | ❌             |
+|                  | GET    | `/api/auth/profile`     | Obtener perfil del usuario autenticado      | ✅ JWT         |
+| **Usuarios**     | GET    | `/api/users`            | Listar todos los usuarios                   | ✅ Admin       |
+|                  | GET    | `/api/users/:id`        | Obtener un usuario por ID                   | ✅ JWT         |
+|                  | PUT    | `/api/users/:id`        | Actualizar datos de un usuario              | ✅ JWT         |
+|                  | DELETE | `/api/users/:id`        | Eliminar usuario                            | ✅ Admin       |
+| **Habitaciones** | GET    | `/api/rooms`            | Listar todas las habitaciones               | ❌             |
+|                  | GET    | `/api/rooms/:id`        | Obtener detalle de una habitación           | ❌             |
+|                  | POST   | `/api/rooms`            | Crear nueva habitación                      | ✅ Admin       |
+|                  | PUT    | `/api/rooms/:id`        | Editar habitación                           | ✅ Admin       |
+|                  | DELETE | `/api/rooms/:id`        | Eliminar habitación                         | ✅ Admin       |
+| **Reservas**     | GET    | `/api/reservations`     | Listar reservas del usuario o todas (admin) | ✅ JWT         |
+|                  | POST   | `/api/reservations`     | Crear nueva reserva                         | ✅ JWT         |
+|                  | GET    | `/api/reservations/:id` | Ver detalle de una reserva                  | ✅ JWT         |
+|                  | PUT    | `/api/reservations/:id` | Actualizar reserva                          | ✅ JWT         |
+|                  | DELETE | `/api/reservations/:id` | Cancelar reserva                            | ✅ JWT         |
+
+
 🤝 Contribuciones
 
 Las contribuciones son bienvenidas 🚀.
