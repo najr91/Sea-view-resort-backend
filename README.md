@@ -1,140 +1,114 @@
-Backend Sea Resort
-¡Bienvenido al backend de Sea Resort! Este proyecto es una API robusta y escalable construida con Node.js y Express.js, diseñada para gestionar los servicios y la información de un resort. Utiliza una base de datos MongoDB para un almacenamiento de datos flexible y eficiente.
+# 🌐 Sea View Resort - Backend
 
-🚀 Características Principales
-Autenticación de Usuarios: Gestión de usuarios y sesiones seguras.
+¡Bienvenido al **Backend de Sea View Resort**! 🎉  
+Este proyecto es una **API REST robusta y escalable**, construida con **Node.js + Express.js**, diseñada para gestionar los servicios, usuarios y reservas de un resort.  
+La base de datos está implementada con **MongoDB Atlas**, ofreciendo un almacenamiento flexible y eficiente.
 
-Gestión de Habitaciones: Funcionalidades CRUD (Crear, Leer, Actualizar, Borrar) para las habitaciones del resort.
+---
 
-Conexión a MongoDB: Conexión y gestión de la base de datos a través de Mongoose.
+## 🚀 Características Principales
 
+- 🔑 **Autenticación de Usuarios**  
+  Gestión de usuarios y sesiones seguras con JWT.  
+- 🏨 **Gestión de Habitaciones**  
+  CRUD completo (Crear, Leer, Actualizar, Borrar).  
+- 🗄️ **Conexión a MongoDB**  
+  Conexión y modelado con **Mongoose**.  
+- ⚙️ **Configuración Flexible**  
+  Variables de entorno en `.env` para múltiples entornos.  
+- 📂 **Servidor de Archivos**  
+  Manejo de imágenes y archivos estáticos.  
+- 📋 **Logging de Solicitudes**  
+  Registro de peticiones HTTP con **morgan**.  
+- 📧 **Envío de Emails**  
+  Integración con **Nodemailer** para notificaciones.  
 
-Configuración Flexible: Utiliza archivos .env para la gestión de variables de entorno, facilitando la configuración en diferentes entornos (desarrollo, producción, etc.).
+---
 
+## 🛠️ Tecnologías y Dependencias
 
-Servidor de Archivos: Sirve archivos estáticos y subidas de imágenes para el proyecto.
+- [Node.js](https://nodejs.org/)  
+- [Express.js](https://expressjs.com/)  
+- [MongoDB + Mongoose](https://mongoosejs.com/)  
+- [dotenv](https://www.npmjs.com/package/dotenv)  
+- [cors](https://www.npmjs.com/package/cors)  
+- [bcrypt / bcryptjs](https://www.npmjs.com/package/bcrypt)  
+- [jsonwebtoken (JWT)](https://www.npmjs.com/package/jsonwebtoken)  
+- [morgan](https://www.npmjs.com/package/morgan)  
+- [cookie-parser](https://www.npmjs.com/package/cookie-parser)  
+- [multer](https://www.npmjs.com/package/multer)  
+- [nodemailer](https://nodemailer.com/)  
+- [nodemon](https://www.npmjs.com/package/nodemon)  
 
-Logging de Solicitudes: Uso de morgan para el registro de solicitudes HTTP.
+---
 
-🛠️ Tecnologías y Dependencias
-Node.js: Entorno de ejecución de JavaScript.
+## ⚙️ Configuración e Instalación
 
-Express.js: Framework de servidor web.
+### 📌 Prerrequisitos
+- **Node.js** (v18 o superior)  
+- **npm** (incluido con Node.js)  
+- **MongoDB** (local o remoto)  
 
-Mongoose: Modelado de objetos para MongoDB.
+### 📥 Pasos de Instalación
 
-dotenv: Carga de variables de entorno desde un archivo .env.
+1. Clonar el repositorio:
+   ```bash
+   git clone https://github.com/tuusuario/seaview-backend.git
+   cd seaview-backend
 
-cors: Permite solicitudes de recursos de origen cruzado.
-
-bcrypt / bcryptjs: Librerías para encriptación de contraseñas.
-
-jsonwebtoken: Implementa tokens de autenticación (JWT).
-
-morgan: Middleware de registro de solicitudes HTTP.
-
-cookie-parser: Analiza las cookies adjuntas a la solicitud.
-
-multer: Middleware para el manejo de multipart/form-data, utilizado para subir archivos.
-
-nodemailer: Envío de correos electrónicos.
-
-nodemon: Herramienta que monitorea cambios en el código y reinicia el servidor automáticamente durante el desarrollo.
-
-⚙️ Configuración e Instalación
-Prerrequisitos
-Asegúrate de tener instalados los siguientes componentes:
-
-Node.js (versión recomendada: 18 o superior)
-
-npm (incluido con Node.js)
-
-MongoDB (servidor local o acceso a una instancia remota)
-
-Pasos de Instalación
-Clona el repositorio en tu máquina local.
-
-Navega al directorio del proyecto.
-
-Instala las dependencias del proyecto:
-
-Bash
-
+Instalar dependencias:
 npm install
-Crea un archivo .env en la raíz del proyecto. Puedes usar el archivo 
 
-.env.example como plantilla.
+Crear el archivo .env en la raíz (puedes basarte en .env.example):
 
-Configura las variables de entorno en tu archivo .env. Las siguientes variables son necesarias:
+PORT=4002
+FRONTEND_URL=http://localhost:5173
+MONGODB_URI=mongodb://localhost:27017/Searesort
+SECRET_KEY_TOKEN=tu_clave_secreta
+NODE_ENV=development
 
-
-PORT: Puerto del servidor (ej: 4002).
-
-
-FRONTEND_URL: URL de tu frontend para la configuración de CORS (ej: http://localhost:5173).
-
-
-MONGODB_URI: URI de conexión a tu base de datos MongoDB (ej: mongodb://localhost:27017/Searesort).
-
-
-SECRET_KEY_TOKEN: Una clave secreta para la generación de tokens JWT.
-
-
-NODE_ENV: Entorno de la aplicación (development o production).
-
-Variables para el envío de correos electrónicos (
-
-MAIL_HOST, MAIL_PORT, MAIL_USER, MAIL_PASS, MAIL_FROM).
+# Variables para envío de emails
+MAIL_HOST=smtp.tuservidor.com
+MAIL_PORT=587
+MAIL_USER=tu_correo@dominio.com
+MAIL_PASS=tu_password
+MAIL_FROM="Sea Resort <no-reply@searesort.com>"
 
 ▶️ Ejecución del Proyecto
-Para iniciar el servidor, utiliza uno de los siguientes comandos:
-
-Modo de Desarrollo:
-
-Bash
-
+🔹 Modo Desarrollo
 npm run dev
-Este comando utiliza nodemon para reiniciar automáticamente el servidor cada vez que se detectan cambios en los archivos. El servidor se ejecutará en el puerto especificado en tu archivo .env (o el puerto 3000 si no se especifica).
 
-Modo de Producción:
+Ejecuta el servidor con nodemon para reinicio automático en cambios.
 
-Bash
-
+🔹 Modo Producción
 npm start
-Este comando inicia la aplicación en un entorno de producción utilizando Node.js.
+
+Ejecuta el servidor en modo producción.
 
 📂 Estructura del Proyecto
-app.js: Archivo principal de configuración de la aplicación Express. Aquí se configuran los middlewares y las rutas.
-
-db.js: Contiene la lógica para la conexión a la base de datos MongoDB con Mongoose.
-
-index.js: El punto de entrada de la aplicación. Aquí se inicia el servidor y se establece la conexión a la base de datos.
-
-package.json: Archivo que gestiona las dependencias y scripts del proyecto.
-
-
-.env: Archivo que almacena las variables de entorno (ignorado por Git).
-
-
-.env.example: Un archivo de ejemplo para las variables de entorno requeridas.
-
-
-.gitignore: Listado de archivos y directorios que Git debe ignorar.
+├── app.js            # Configuración principal de Express y middlewares
+├── db.js             # Conexión a MongoDB con Mongoose
+├── index.js          # Punto de entrada de la aplicación
+├── package.json      # Dependencias y scripts
+├── .env              # Variables de entorno
+├── .env.example      # Ejemplo de configuración
+├── .gitignore        # Archivos ignorados por Git
+└── routes/           # Definición de rutas principales (auth, rooms, reservations)
 
 🤝 Contribuciones
-Las contribuciones son bienvenidas. Siéntete libre de abrir un pull request o un issue en el repositorio.
+
+Las contribuciones son bienvenidas 🚀.
+Puedes abrir un issue o enviar un pull request en el repositorio.
 
 ✍️ Autores
+Proyecto desarrollado por el equipo de RollingCode School:
 
-Nelson Juarez Rivas
+- Nelson Juarez Rivas
 
-Natividad Rodriguez
+- Natividad Rodriguez
 
-Lucia Gallardo
+- Lucia Gallardo
 
-Santiago Nieva
+- Santiago Nieva
 
-José Perez
-
-📄 Licencia
-Este proyecto está bajo la licencia ISC.
+- José Perez
