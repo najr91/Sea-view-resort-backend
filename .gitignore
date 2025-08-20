@@ -2,3 +2,5 @@
 node_modules/
 generateAdminToken.js
 .vscode
+tempPasswordReset.routes.js
+testUser.js
