@@ -8,18 +8,13 @@ import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import roomsRouter from "./src/routes/rooms.js";
 import reservasRouter from "./src/routes/reservas.js";
-import adminUserRoutes from "./src/routes/adminUser.routes.js";
 import authRoutes from "./src/routes/auth.routes.js";
-
-
-
 
 dotenv.config({ quiet: true });
 
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
 
 const corsOptions = {
   origin: process.env.FRONTEND_URL || "http://localhost:5173",
@@ -41,17 +36,12 @@ app.use("/api", reservasRouter);
 app.use(express.static(path.join(__dirname, "public")));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-
 app.use("/api/rooms", roomsRouter);
-app.use("/api/admin/users", adminUserRoutes);
 app.use("/api/auth", authRoutes);
-
-
 
 app.get("/", (req, res) => {
   res.send("API funcionando 🚀");
 });
-
 
 const routeFiles = fs.readdirSync("./src/routes");
 routeFiles.forEach((file) => {
