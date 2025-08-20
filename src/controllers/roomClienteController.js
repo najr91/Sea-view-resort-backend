@@ -1,5 +1,6 @@
 import dayjs from "dayjs";
 import Reserva from "../models/Reserva.js";
+import Room from "../models/Room.js";
 import { validarDisponibilidad } from "../validators/reserva.validator.js";
 
 // Obtener disponibilidad de una habitación
@@ -20,7 +21,7 @@ export const getRoomDisponibilidad = async (req, res) => {
 // Crear una reserva
 export const createReserva = async (req, res) => {
   try {
-    const { roomId, checkIn, checkOut, destino, huespedes } = req.body;
+    const { roomId, checkIn, checkOut, destino, huespedes, precioPorNoche } = req.body;
 
     if (dayjs(checkOut).isSameOrBefore(checkIn)) {
       return res.status(400).json({ error: "Fechas inválidas" });
@@ -29,6 +30,10 @@ export const createReserva = async (req, res) => {
     if (!Number.isInteger(huespedes) || huespedes < 1) {
       return res.status(400).json({ error: "Cantidad de huéspedes inválida" });
     }
+
+    // Calcular noches y precio total
+    const noches = dayjs(checkOut).diff(dayjs(checkIn), 'day');
+    const precioTotal = precioPorNoche * noches;
 
     // Validar disponibilidad global por tipo y destino
     try {
@@ -49,7 +54,16 @@ export const createReserva = async (req, res) => {
       return res.status(400).json({ error: "La habitación no está disponible en ese destino y fechas" });
     }
 
-    const reserva = new Reserva({ roomId, checkIn, checkOut, destino, huespedes });
+    const reserva = new Reserva({ 
+      roomId, 
+      checkIn, 
+      checkOut, 
+      destino, 
+      huespedes,
+      precioPorNoche,
+      precioTotal,
+      noches
+    });
     await reserva.save();
     res.status(201).json(reserva);
   } catch (err) {
