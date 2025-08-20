@@ -14,6 +14,12 @@ import {
   passwordChange,
   passwordResetRequest,
 } from "../controllers/password-reset.controller.js";
+import { authRole } from "../middlewares/verifyRole.js";
+import {
+  deleteUser,
+  getUsers,
+  updateUser,
+} from "../controllers/manage-user.controller.js";
 
 const router = express.Router();
 
@@ -25,5 +31,8 @@ router.get("/verify-token", verifyToken);
 router.get("/verify-email", verifyEmail);
 router.post("/password-reset-request", passwordResetRequest);
 router.post("/password-change/:token", passwordChange);
+router.get("/users", authRequired, authRole(["admin"]), getUsers);
+router.put("/users/:id", authRequired, authRole(["admin"]), updateUser);
+router.delete("/users/:id", authRequired, authRole(["admin"]), deleteUser);
 
 export default router;
