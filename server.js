@@ -1,5 +1,4 @@
 import express from "express";
-import axios from "axios";
 import cors from "cors";
 import dotenv from "dotenv";
 
@@ -8,9 +7,6 @@ dotenv.config();
 const app = express();
 app.use(cors());
 app.use(express.json());
-
-const HF_TOKEN = process.env.HF_TOKEN || ""; 
-
 
 const respuestasFijas = {
   "check in": "El check-in es a partir de las 14:00 hs.",
@@ -34,8 +30,14 @@ const respuestasFijas = {
   "horario restaurante": "Nuestro restaurante abre de 12:30 a 15:30 y de 20:00 a 23:30.",
   "habitaciones": "Ofrecemos habitaciones estándar, superior y suite, con vista al mar según disponibilidad.",
   "precio": "Nuestros precios varían según la temporada y tipo de habitación.",
+  "alquiler de autos": "Sí, hay servicio de alquiler de autos cerca del hotel, con convenios especiales para nuestros huéspedes.",
+  "alquiler autos": "Sí, hay servicio de alquiler de autos cerca del hotel, con convenios especiales para nuestros huéspedes.",
+  "glamping": "El servicio de glamping en la playa incluye seguridad 24 horas para tu tranquilidad.",
+  "tienda de campaña": "El área de tienda de campaña cuenta con seguridad 24 horas durante toda la temporada.",
+  "seguridad": "Contamos con seguridad 24 horas en todas las instalaciones, incluyendo el glamping y tienda de campaña.",
   "hola": "¡Hola! ¿En qué puedo ayudarte?",
-  "buenas": "¡Hola! ¿En qué puedo ayudarte?"
+  "buenas": "¡Hola! ¿En qué puedo ayudarte?",
+  "default": "Perdón, no tengo esa información ahora mismo. ¿Querés consultar recepción por WhatsApp?"
 };
 
 function buscarRespuestaFija(mensaje) {
@@ -44,40 +46,14 @@ function buscarRespuestaFija(mensaje) {
   for (const clave of claves) {
     if (m.includes(clave)) return respuestasFijas[clave];
   }
-  return null;
+  return respuestasFijas["default"];
 }
 
-app.post("/chat", async (req, res) => {
+app.post("/chat", (req, res) => {
   const { message = "" } = req.body;
-
- 
-  const fija = buscarRespuestaFija(message);
-  if (fija) return res.json({ reply: fija });
-
- 
-  if (!HF_TOKEN) {
-    return res.json({ reply: "No tengo esa información ahora mismo, ¿querés consultar recepción por WhatsApp?" });
-  }
-
-  try {
-    const hfRes = await axios.post(
-      "https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium-spanish",
-      { inputs: message },
-      { headers: { Authorization: `Bearer ${HF_TOKEN}` }, timeout: 12000 }
-    );
-
-    const reply =
-      Array.isArray(hfRes.data) && hfRes.data[0]?.generated_text
-        ? hfRes.data[0].generated_text
-        : "Perdón, no tengo esa info ahora mismo.";
-
-    return res.json({ reply });
-  } catch (e) {
-    console.error("HF error:", e?.response?.data || e.message);
-    return res.json({ reply: "Perdón, hubo un error al conectar con IA. Probá de nuevo más tarde." });
-  }
+  const reply = buscarRespuestaFija(message);
+  return res.json({ reply });
 });
 
-
-const PORT = 4000;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`✅ Backend en http://localhost:${PORT}`));
