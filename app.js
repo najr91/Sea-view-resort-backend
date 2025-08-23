@@ -9,6 +9,7 @@ import cookieParser from "cookie-parser";
 import roomsRouter from "./src/routes/rooms.js";
 import reservasRouter from "./src/routes/reservas.js";
 import authRoutes from "./src/routes/auth.routes.js";
+import chatRouter from "./src/routes/chat.routes.js";
 
 dotenv.config({ quiet: true });
 
@@ -32,6 +33,7 @@ app.use(cookieParser());
 // --- Rutas ---
 app.use("/api/rooms", roomsRouter);
 app.use("/api", reservasRouter);
+app.use("/chat", chatRouter);
 
 app.use(express.static(path.join(__dirname, "public")));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));

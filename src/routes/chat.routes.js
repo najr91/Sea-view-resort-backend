@@ -1,18 +1,14 @@
-import express from "express";
-import cors from "cors";
-import dotenv from "dotenv";
+import { Router } from "express";
 
-dotenv.config();
-
-const app = express();
-app.use(cors());
-app.use(express.json());
+const router = Router();
 
 const respuestasFijas = {
   "check in": "El check-in es a partir de las 14:00 hs.",
   "check-in": "El check-in es a partir de las 14:00 hs.",
   "check out": "El check-out es hasta las 11:00 hs.",
   "check-out": "El check-out es hasta las 11:00 hs.",
+  "check in check out": "El check-in es a partir de las 14:00 hs y el check-out es hasta las 11:00 hs.",
+  "check-in check-out": "El check-in es a partir de las 14:00 hs y el check-out es hasta las 11:00 hs.",
   "transfer": "Sí, ofrecemos transfers desde y hacia el aeropuerto. Se debe reservar con anticipación.",
   "aeropuerto": "Sí, contamos con transfers desde y hacia el aeropuerto, con reserva previa.",
   "pet": "Somos pet friendly 🐾, pedimos a los dueños ser responsables con sus mascotas.",
@@ -27,11 +23,13 @@ const respuestasFijas = {
   "estacionamiento": "Tenemos estacionamiento cubierto sujeto a disponibilidad.",
   "estacionar": "Tenemos estacionamiento cubierto sujeto a disponibilidad.",
   "desayuno": "El desayuno buffet está incluido en la tarifa.",
-  "horario restaurante": "Nuestro restaurante abre de 12:30 a 15:30 y de 20:00 a 23:30.",
+  "horario restaurante": "Nuestro restaurante abre de 12:30 a 15:30 y de 20:00 a 23:30 pero contamos con servicio a la habitacion las 24 hs.",
+  "restaurante": "Nuestro restaurante abre de 12:30 a 15:30 y de 20:00 a 23:30 pero contamos con servicio a la habitacion las 24 hs.",
   "habitaciones": "Ofrecemos habitaciones estándar, superior y suite, con vista al mar según disponibilidad.",
   "precio": "Nuestros precios varían según la temporada y tipo de habitación.",
   "alquiler de autos": "Sí, hay servicio de alquiler de autos cerca del hotel, con convenios especiales para nuestros huéspedes.",
-  "alquiler autos": "Sí, hay servicio de alquiler de autos cerca del hotel, con convenios especiales para nuestros huéspedes.",
+   "autos": "Sí, hay servicio de alquiler de autos cerca del hotel, con convenios especiales para nuestros huéspedes.",
+   "auto": "Sí, hay servicio de alquiler de autos cerca del hotel, con convenios especiales para nuestros huéspedes.",
   "glamping": "El servicio de glamping en la playa incluye seguridad 24 horas para tu tranquilidad.",
   "tienda de campaña": "El área de tienda de campaña cuenta con seguridad 24 horas durante toda la temporada.",
   "seguridad": "Contamos con seguridad 24 horas en todas las instalaciones, incluyendo el glamping y tienda de campaña.",
@@ -49,11 +47,10 @@ function buscarRespuestaFija(mensaje) {
   return respuestasFijas["default"];
 }
 
-app.post("/chat", (req, res) => {
+router.post("/", (req, res) => {
   const { message = "" } = req.body;
   const reply = buscarRespuestaFija(message);
   return res.json({ reply });
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`✅ Backend en http://localhost:${PORT}`));
+export default router;
