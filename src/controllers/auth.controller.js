@@ -8,8 +8,9 @@ import { email, success } from "zod";
 import { error } from "console";
 
 export const register = async (req, res) => {
+  console.log("Body recibido:", req.body);
   try {
-    const { username, email, password } = req.body;
+    const { email, password } = req.body;
 
     const userMatch = await User.findOne({ email });
 
@@ -23,7 +24,6 @@ export const register = async (req, res) => {
     const verificationToken = crypto.randomBytes(20).toString("hex");
 
     const newUser = new User({
-      username,
       email,
       password: passwordHash,
       verificationToken,
@@ -40,14 +40,14 @@ export const register = async (req, res) => {
       subject: "Verifica tu email - Sea View Resort",
       template: "verifyEmail",
       context: {
-        username: savedUser.username,
+        email: savedUser.email,
         verificationLink,
       },
     });
 
     const token = await createToken({
       id: savedUser._id,
-      username: savedUser.username,
+
       email: savedUser.email,
       role: savedUser.role,
     });
@@ -60,7 +60,7 @@ export const register = async (req, res) => {
 
     res.status(201).json({
       id: savedUser._id,
-      username: savedUser.username,
+
       email: savedUser.email,
       isVerified: savedUser.isVerified,
       role: savedUser.role,
@@ -95,7 +95,7 @@ export const login = async (req, res) => {
 
     const token = await createToken({
       id: userMatch._id,
-      username: userMatch.username,
+
       email: userMatch.email,
       role: userMatch.role,
     });
@@ -108,7 +108,7 @@ export const login = async (req, res) => {
 
     res.status(200).json({
       id: userMatch._id,
-      username: userMatch.username,
+
       email: userMatch.email,
       isVerified: userMatch.isVerified,
       role: userMatch.role,
@@ -140,7 +140,7 @@ export const profile = async (req, res) => {
 
     return res.status(200).json({
       id: userMatch.id,
-      username: userMatch.username,
+
       email: userMatch.email,
       profileImage: userMatch.profileImage,
       createdAt: userMatch.createdAt,
@@ -173,7 +173,7 @@ export const verifyToken = async (req, res) => {
 
     return res.json({
       id: userMatch._id,
-      username: userMatch.username,
+
       email: userMatch.email,
       isVerified: userMatch.isVerified,
       role: userMatch.role,
@@ -200,7 +200,6 @@ export const verifyEmail = async (req, res) => {
           success: true,
           message: "Email ya verificado",
           user: {
-            id: userVerified.username,
             email: userVerified.email,
             isVerified: userVerified.isVerified,
           },
