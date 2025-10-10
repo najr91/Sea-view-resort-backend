@@ -1,55 +1,32 @@
 import express from "express";
-import multer from "multer";
+import { upload } from "../middlewares/upload.js";
 import {
   getRooms,
   createRoom,
   updateRoom,
   deleteRoom,
-  addImages,     // <- cambiado
-  deleteImage,   // <- cambiado
+  addImages,
+  deleteImage,
 } from "../controllers/roomController.js";
-import { protect, isAdmin } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/rooms");
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + "-" + file.originalname);
-  },
-});
-
-const fileFilter = (req, file, cb) => {
-  const allowedExtensions = /jpeg|jpg|png|webp/;
-  const ext = file.originalname.toLowerCase().split(".").pop();
-  if (allowedExtensions.test(ext)) {
-    cb(null, true);
-  } else {
-    cb(new Error("Solo se permiten imágenes .jpg, .jpeg, .png o .webp"));
-  }
-};
-
-const upload = multer({
-  storage,
-  limits: { fileSize: 4 * 1024 * 1024 }, 
-  fileFilter,
-});
-
+// --- Obtener todas las habitaciones ---
 router.get("/", getRooms);
-router.post("/", protect, isAdmin, createRoom);
-router.put("/:id", protect, isAdmin, updateRoom);
-router.delete("/:id", protect, isAdmin, deleteRoom);
 
-router.post(
-  "/:id/photos",
-  protect,
-  isAdmin,
-  upload.array("photos", 5), // máximo 5 imágenes por solicitud
-  addImages
-);
+// --- Crear nueva habitación ---
+router.post("/", createRoom);
 
-router.delete("/:id/photos", protect, isAdmin, deleteImage);
+// --- Actualizar habitación existente ---
+router.put("/:id", updateRoom);
+
+// --- Eliminar habitación ---
+router.delete("/:id", deleteRoom);
+
+// --- Subir imágenes de la computadora (hasta 10 archivos) ---
+router.post("/:id/images", upload.array("images", 10), addImages);
+
+// --- Eliminar imagen de habitación ---
+router.delete("/:id/images", deleteImage);
 
 export default router;
